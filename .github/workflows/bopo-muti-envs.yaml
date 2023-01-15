@@ -38,24 +38,23 @@ jobs:
         token: ${{ secrets.GIT_TOKEN }}
         prefix: ${{ secrets.MAIN_APP_PREFIX }}
       
-    - name: Build, tag, and push main image to Amazon ECR
-      id: build_image_tag_push
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-        IMAGE_TAG: ${{ steps.buildnumbermain.outputs.build_number }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-    - name: Run a multi-line script
+#     - name: Build, tag, and push main image to Amazon ECR
+#       id: build_image_tag_push
 #       env:
 #         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 #         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+#         IMAGE_TAG: ${{ steps.buildnumbermain.outputs.build_number }}
+#       run: |
+#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Get repo url & image
+      id: get_image
       run: |
+        REPO_URL=$(aws ecr describe-repositories --repository-names bopo --query "repositories[0].repositoryUri" --output text)
         IMAGE_LIST=$(aws ecr list-images --repository-name bopo)
         IMAGE_NAME=$(echo $IMAGE_LIST | jq '.imageIds[-1].imageTag' -r)
-        echo ${{ steps.build_image_tag_push.outputs.ECR_REGISTRY }}
+        echo $REPO_URL:$IMAGE_NAME
         
     - name: Logout from Amazon ECR
       if: always()
@@ -64,8 +63,8 @@ jobs:
     - name: deploy to development
       if: success()
       run: |
-        echo $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        
+        echo "Deploying image: ${{ steps.get_image.outputs.REPO_URL }}" 
+             
   deploy-stage:
     if: github.ref == 'refs/heads/stage'
     runs-on: ubuntu-latest
