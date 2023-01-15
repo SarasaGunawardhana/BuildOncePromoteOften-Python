@@ -103,7 +103,7 @@ jobs:
        #      kubectl set image deployment/my-deployment my-container=${{ env.REPO_URL }}/${{ env.IMAGE_NAME }}
        
   deploy-main:
-    if: github.ref == 'refs/heads/stage'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
