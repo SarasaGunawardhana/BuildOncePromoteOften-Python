@@ -55,9 +55,8 @@ jobs:
         IMAGE_LIST=$(aws ecr list-images --repository-name bopo)
         IMAGE_NAME=$(echo $IMAGE_LIST | jq '.imageIds[-1].imageTag' -r)
         echo $REPO_URL:$IMAGE_NAME
-      env:
-        IMAGE_NAME: $IMAGE_NAME
-        REPO_URL: $REPO_URL
+        echo "REPO_URL=$REPO_URL" >> $GITHUB_ENV
+        echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
         
     - name: Logout from Amazon ECR
       if: always()
