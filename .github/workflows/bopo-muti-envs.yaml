@@ -39,6 +39,7 @@ jobs:
         prefix: ${{ secrets.MAIN_APP_PREFIX }}
       
     - name: Build, tag, and push main image to Amazon ECR
+      id: build_image_tag_push
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
@@ -54,7 +55,7 @@ jobs:
       run: |
         IMAGE_LIST=$(aws ecr list-images --repository-name bopo)
         IMAGE_NAME=$(echo $IMAGE_LIST | jq '.imageIds[-1].imageTag' -r)
-        echo $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_NAME
+        echo ${{ steps.build_image_tag_push.outputs.ECR_REGISTRY }}
         
     - name: Logout from Amazon ECR
       if: always()
