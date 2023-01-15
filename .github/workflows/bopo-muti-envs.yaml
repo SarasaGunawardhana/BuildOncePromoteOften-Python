@@ -55,6 +55,9 @@ jobs:
         IMAGE_LIST=$(aws ecr list-images --repository-name bopo)
         IMAGE_NAME=$(echo $IMAGE_LIST | jq '.imageIds[-1].imageTag' -r)
         echo $REPO_URL:$IMAGE_NAME
+      env:
+        IMAGE_NAME: $IMAGE_NAME
+        REPO_URL: $REPO_URL
         
     - name: Logout from Amazon ECR
       if: always()
@@ -63,7 +66,7 @@ jobs:
     - name: deploy to development
       if: success()
       run: |
-        echo "Deploying image: ${{ steps.get_image.outputs.REPO_URL }}" 
+        echo ${{ env.IMAGE_NAME }}
              
   deploy-stage:
     if: github.ref == 'refs/heads/stage'
