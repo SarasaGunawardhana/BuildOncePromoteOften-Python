@@ -63,7 +63,7 @@ jobs:
         
   deploy_to_staging:
     needs: approve
-    if: steps.approve.outputs.approved == 'true'
+    if: needs.approve.outputs.approved == 'true'
     runs-on: ubuntu-latest
     steps:
     - name: Deploy to Staging
