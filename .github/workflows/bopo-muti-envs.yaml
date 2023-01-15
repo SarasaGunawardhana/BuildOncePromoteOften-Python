@@ -14,7 +14,7 @@ on:
         
 jobs:
   build:
-    if: github.ref == 'refs/heads/development'
+#     if: github.ref == 'refs/heads/development'
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -43,11 +43,11 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
         IMAGE_TAG: ${{ steps.buildnumbermain.outputs.build_number }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        touch testing.txt
-        ls
+#       run: |
+#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#         touch testing.txt
+#         ls
     - name: Run a multi-line script
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
